@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data:; style-src 'unsafe-inline'; script-src 'unsafe-inline'" />
+  <title>Tobiya Hub</title>
+  <style>
+    :root { color-scheme: dark; --brand: #4338ca; --brand2: #5b54f0; --muted: #6a7396; --sub: #a3abc8; --green: #22c55e; }
+    * { box-sizing: border-box; }
+    html, body {
+      margin: 0; height: 100%; background: transparent; overflow: hidden;
+      font-family: "Segoe UI Variable", "Segoe UI", system-ui, sans-serif; color: #eef1fb;
+      user-select: none; -webkit-app-region: drag;
+    }
+    .wrap { height: 100%; display: grid; place-items: center; padding: 26px; }
+    .card {
+      position: relative; width: 100%; padding: 40px 36px 22px; border-radius: 28px; text-align: center;
+      background: linear-gradient(180deg, #121633, #0b0e1f); border: 1px solid #2a3170;
+      box-shadow: 0 24px 70px rgba(0,0,0,.6), inset 0 1px 0 rgba(255,255,255,.06);
+      overflow: hidden; animation: rise .7s cubic-bezier(.2,.8,.25,1) both;
+    }
+    .orb { position: absolute; border-radius: 50%; filter: blur(40px); }
+    .orb.a { width: 220px; height: 220px; background: #4338ca; top: -90px; left: -60px; opacity: .55; animation: drift 6s ease-in-out infinite; }
+    .orb.b { width: 180px; height: 180px; background: #0891b2; bottom: -80px; right: -50px; opacity: .35; animation: drift 7s ease-in-out infinite reverse; }
+    .logo {
+      position: relative; display: inline-block; background: #fff; border-radius: 18px; padding: 16px 22px;
+      box-shadow: 0 0 0 1px rgba(255,255,255,.4), 0 12px 40px rgba(91,84,240,.45);
+      animation: float 3s ease-in-out .7s infinite;
+    }
+    .logo::after { content: ""; position: absolute; inset: -6px; border-radius: 22px; border: 2px solid rgba(129,140,248,.55); animation: ring 2s ease-out infinite; }
+    .logo img { height: 58px; display: block; }
+    h1 { position: relative; margin: 22px 0 2px; font-size: 24px; font-weight: 800; letter-spacing: -.02em; animation: fade .6s .25s both; }
+    .sub { position: relative; color: var(--muted); font-size: 13px; animation: fade .6s .4s both; }
+    .bar { position: relative; height: 6px; border-radius: 99px; background: #1c2246; margin: 26px 0 8px; overflow: hidden; animation: fade .6s .5s both; }
+    .bar i {
+      display: block; height: 100%; width: 0; border-radius: 99px;
+      background: linear-gradient(90deg, #4338ca, #818cf8, #22d3ee); background-size: 200% 100%;
+      animation: shine 1.4s linear infinite; transition: width .35s ease;
+    }
+    .stat { position: relative; display: flex; justify-content: space-between; font-size: 12px; color: var(--sub); animation: fade .6s .55s both; }
+    .stat b { color: #fff; font-variant-numeric: tabular-nums; }
+    ul { position: relative; list-style: none; padding: 0; margin: 18px 0 0; text-align: left; display: grid; grid-template-columns: 1fr 1fr; gap: 8px 14px; animation: fade .6s .65s both; }
+    li { display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--muted); }
+    .dot { width: 16px; height: 16px; border-radius: 50%; border: 1.5px solid #39407a; display: grid; place-items: center; flex: 0 0 auto; }
+    li.run { color: #fff; }
+    li.run .dot { border-color: #818cf8; border-top-color: transparent; animation: spin .7s linear infinite; }
+    li.done { color: var(--sub); }
+    li.done .dot { background: var(--green); border-color: var(--green); }
+    li.done .dot svg { width: 10px; height: 10px; }
+    .ver { position: relative; margin-top: 22px; font-size: 11px; color: #4f5785; }
+    @keyframes rise { from { opacity: 0; transform: translateY(18px) scale(.95); } }
+    @keyframes fade { from { opacity: 0; transform: translateY(8px); } }
+    @keyframes float { 50% { transform: translateY(-5px); } }
+    @keyframes ring { from { opacity: .9; transform: scale(1); } to { opacity: 0; transform: scale(1.18); } }
+    @keyframes drift { 50% { transform: translate(30px, 20px); } }
+    @keyframes shine { to { background-position: -200% 0; } }
+    @keyframes spin { to { transform: rotate(360deg); } }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="card">
+      <span class="orb a"></span><span class="orb b"></span>
+      <div class="logo"><img src="assets/logo.png" alt="Tobiya Studio" /></div>
+      <h1>Tobiya Hub</h1>
+      <div class="sub">Multi VR Headset Management</div>
+      <div class="bar"><i id="fill"></i></div>
+      <div class="stat"><span id="txt">Starting up…</span><b id="pct">0%</b></div>
+      <ul id="steps">
+        <li><span class="dot"></span>Starting ADB server</li>
+        <li><span class="dot"></span>Looking for headsets</li>
+        <li><span class="dot"></span>Checking license</li>
+        <li><span class="dot"></span>Loading workspace</li>
+      </ul>
+      <div class="ver" id="ver">© Tobiya Studio</div>
+    </div>
+  </div>
+  <script>
+    const v = new URLSearchParams(location.search).get('v');
+    if (v) document.getElementById('ver').textContent = `v${v} · © Tobiya Studio`;
+    const CHECK = '<svg viewBox="0 0 24 24" fill="none" stroke="#04210f" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>';
+    const items = [...document.querySelectorAll('#steps li')];
+    // Called by the main process as each real startup step begins (4 = all done)
+    window.setStep = (i, text) => {
+      items.forEach((li, k) => {
+        const done = k < i;
+        li.classList.toggle('done', done);
+        li.classList.toggle('run', k === i);
+        li.querySelector('.dot').innerHTML = done ? CHECK : '';
+      });
+      const pct = Math.round((Math.min(i, items.length) / items.length) * 100);
+      document.getElementById('fill').style.width = `${pct}%`;
+      document.getElementById('pct').textContent = `${pct}%`;
+      if (text) document.getElementById('txt').textContent = text;
+    };
+  </script>
+</body>
+</html>

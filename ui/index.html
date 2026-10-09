@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data: file:; media-src 'self' file:; style-src 'self'" />
+  <title>Tobiya Hub</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+<div class="app">
+  <!-- ================= SIDEBAR ================= -->
+  <aside class="side">
+    <div class="brand"><img src="assets/logo.png" alt="Tobiya Studio" /></div>
+    <div class="hubname">Hub · Control room</div>
+    <nav class="nav" id="nav">
+      <button data-page="devices" class="on"><svg class="i"><use href="#i-headset"/></svg>Devices<span class="badge" id="nbDevices">0/0</span></button>
+      <button data-page="order"><svg class="i"><use href="#i-key"/></svg>Order Checker</button>
+      <button data-page="content"><svg class="i"><use href="#i-grid"/></svg>Content library</button>
+      <button data-page="files"><svg class="i"><use href="#i-folder"/></svg>Files<span class="badge" id="nbFiles">0</span></button>
+      <button data-page="insights"><svg class="i"><use href="#i-chart"/></svg>Insights</button>
+      <button data-page="settings"><svg class="i"><use href="#i-settings"/></svg>Settings</button>
+    </nav>
+    <div class="side-foot">
+      <div class="health">
+        <h4>System</h4>
+        <div class="hrow">ADB <b id="hAdb">starting…</b></div>
+        <div class="hrow">Headsets online <b id="hOnline">0</b></div>
+        <div class="hrow click" id="hLic">License <b id="hLicT">—</b></div>
+      </div>
+      <div class="ver" id="appVersion">Tobiya Hub</div>
+    </div>
+  </aside>
+
+  <!-- ================= MAIN ================= -->
+  <div class="main">
+    <header class="top">
+      <div class="title"><h1 id="ttl">Devices</h1><div class="crumb" id="sub">Looking for headsets…</div></div>
+      <span class="sp"></span>
+      <div class="target" id="targetChip" title="Commands target the selected headsets, or every online headset when none are selected">
+        <svg class="i"><use href="#i-headset"/></svg><span id="tgtTxt">All online</span><small id="tgtN">(0)</small>
+      </div>
+      <div class="qa">
+        <button id="qaHome" title="Return to the home screen"><svg class="i"><use href="#i-home"/></svg>Home</button>
+        <button id="qaWake" title="Wake the display"><svg class="i"><use href="#i-sun"/></svg>Wake</button>
+        <button id="qaSleep" title="Put the display to sleep"><svg class="i"><use href="#i-moon"/></svg>Sleep</button>
+        <button id="qaVol" data-vol title="Set the volume"><svg class="i"><use href="#i-volume"/></svg><span class="volv">70%</span></button>
+      </div>
+      <div class="livechip" id="liveChip" hidden title="The Live cast window is open — click to bring it to the front"><span class="pulse red"></span>Live cast open</div>
+      <button class="btn live" id="btnLive" title="Open the Live cast window with every online headset"><span class="pulse"></span>Live cast <svg class="i"><use href="#i-external"/></svg></button>
+    </header>
+
+    <!-- ===== DEVICES ===== -->
+    <section class="page on" id="page-devices">
+      <div class="kpis">
+        <div class="kpi"><div class="ico i-b"><svg class="i"><use href="#i-headset"/></svg></div><div><b id="kOnline">0 / 0</b><span>headsets online</span></div></div>
+        <div class="kpi"><div class="ico i-g"><svg class="i"><use href="#i-zap"/></svg></div><div><b id="kBatt">—</b><span>average battery</span></div></div>
+        <div class="kpi"><div class="ico i-a"><svg class="i"><use href="#i-alert"/></svg></div><div><b id="kLow">0</b><span>low battery (&lt;20%)</span></div></div>
+        <div class="kpi"><div class="ico i-r"><svg class="i"><use href="#i-key"/></svg></div><div><b id="kSeats">—</b><span>licensed seats in use</span></div></div>
+      </div>
+      <div class="bar">
+        <div class="chips" id="devFilters">
+          <button class="chip on" data-f="all">All<em id="cAll">0</em></button>
+          <button class="chip" data-f="online">Online<em id="cOnline">0</em></button>
+          <button class="chip" data-f="offline">Offline<em id="cOffline">0</em></button>
+          <button class="chip" data-f="low">Low battery<em id="cLow">0</em></button>
+        </div>
+        <span class="sp"></span>
+        <input class="search" id="devSearch" placeholder="Search headsets…" />
+        <div class="seg" id="devView"><button data-v="cards" class="on"><svg class="i"><use href="#i-grid"/></svg>Cards</button><button data-v="list"><svg class="i"><use href="#i-list"/></svg>List</button></div>
+      </div>
+      <div class="devs" id="devGrid"></div>
+      <div class="card" id="devList" hidden>
+        <table>
+          <thead><tr><th></th><th>Headset</th><th>Model</th><th>Status</th><th>Headset</th><th>Controllers L / R</th><th>Link</th><th>Running</th><th></th></tr></thead>
+          <tbody id="devRows"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ===== ORDER CHECKER ===== -->
+    <section class="page" id="page-order">
+      <div class="card lic">
+        <div class="hd" id="licHead">
+          <span class="lico"><svg class="i"><use href="#i-key"/></svg></span>
+          <div class="sp"><h3>License</h3><div class="muted" id="licSub">No active license.</div></div>
+          <span class="pill" id="licState">—</span>
+          <button class="btn p" id="btnActivate"><svg class="i"><use href="#i-key"/></svg>Activate license code</button>
+        </div>
+        <div class="ltiles">
+          <div class="lt1 hi" id="ltCap"><small>Licensed capacity</small><b id="licCap">—</b><span id="licUse">—</span><div class="lbar"><i id="licUseBar"></i></div></div>
+          <div class="lt1"><small>Time remaining</small><b id="licLeft">—</b><span id="licExp">—</span><div class="lbar"><i id="licTermBar"></i></div></div>
+          <div class="lt1"><small>License code</small><b class="mono" id="licKey">—</b><span id="licChk">—</span>
+            <div class="links"><button class="lnk" id="licCopy">Copy</button><button class="lnk" id="licRecheck">Check now</button></div></div>
+        </div>
+      </div>
+      <div class="infob"><span class="ii"><svg class="i"><use href="#i-info"/></svg></span>Capacity and term live on the license code itself — ask your admin to issue a larger code or renew.</div>
+      <div class="card" id="seatCard">
+        <div class="hd"><h3>Headsets on this license</h3><span class="sp"></span><span class="muted" id="seatTxt"></span></div>
+        <table><thead><tr><th>Headset</th><th>Model</th><th>Serial</th><th>Last seen</th><th>Seat</th></tr></thead><tbody id="seatRows"></tbody></table>
+      </div>
+    </section>
+
+    <!-- ===== CONTENT ===== -->
+    <section class="page" id="page-content">
+      <div class="bar">
+        <div class="seg" id="cTab"><button data-v="apps" class="on"><svg class="i"><use href="#i-gamepad"/></svg>VR apps</button><button data-v="videos"><svg class="i"><use href="#i-film"/></svg>360° videos</button></div>
+        <span class="muted" id="cTarget"></span>
+        <span class="sp"></span>
+        <input class="search" id="cSearch" placeholder="Search library…" />
+        <button class="btn" id="cRescan"><svg class="i"><use href="#i-refresh"/></svg>Rescan headsets</button>
+      </div>
+      <div class="ctgrid">
+        <div>
+          <div class="drop" id="cDrop">
+            <div class="big" id="cDropIco"><svg class="i"><use href="#i-package"/></svg></div>
+            <div class="tx"><b id="cDropTitle">Drop an .apk here to install it on the targeted headsets</b><span class="muted" id="cDropSub">Installs in parallel · progress shown per headset</span></div>
+            <button class="btn p" id="cBrowse"><svg class="i"><use href="#i-upload"/></svg>Browse…</button>
+          </div>
+          <div id="cList"></div>
+        </div>
+        <div class="card side-panel" id="cPanel"></div>
+      </div>
+    </section>
+
+    <!-- ===== FILES ===== -->
+    <section class="page" id="page-files">
+      <div class="store">
+        <span class="fi"><svg class="i"><use href="#i-folder"/></svg></span>
+        <div class="tx"><b id="fDir">—</b><span class="muted" id="fCounts">0 recordings · 0 screenshots</span></div>
+        <span class="sp"></span>
+        <button class="btn s" id="fOpen"><svg class="i"><use href="#i-folder"/></svg>Open folder</button>
+        <button class="btn s" id="fChange">Change…</button>
+      </div>
+      <div class="bar">
+        <div class="seg" id="fType"><button data-v="all" class="on">All</button><button data-v="video"><svg class="i i-rec"><use href="#i-rec"/></svg>Recordings</button><button data-v="image"><svg class="i"><use href="#i-camera"/></svg>Screenshots</button></div>
+        <select class="search" id="fDev"><option value="">All headsets</option></select>
+        <span class="sp"></span>
+        <span class="muted" id="fSelTxt"></span>
+        <button class="btn s" id="fExport" hidden><svg class="i"><use href="#i-download"/></svg>Export</button>
+        <button class="btn s d" id="fDelete" hidden><svg class="i"><use href="#i-trash"/></svg>Delete</button>
+        <input class="search" id="fSearch" placeholder="Search files…" />
+        <div class="seg" id="fSort"><button data-v="new" class="on">Newest</button><button data-v="old">Oldest</button><button data-v="big">Largest</button></div>
+      </div>
+      <div id="fWrap"></div>
+    </section>
+
+    <!-- ===== INSIGHTS ===== -->
+    <section class="page" id="page-insights">
+      <div class="bar">
+        <div class="seg" id="iRange"><button data-v="1">Today</button><button data-v="7" class="on">7 days</button><button data-v="30">30 days</button><button data-v="0">All time</button></div>
+        <span class="sp"></span>
+        <button class="btn" id="iExport"><svg class="i"><use href="#i-download"/></svg>Export CSV</button>
+        <button class="btn d" id="iClear"><svg class="i"><use href="#i-trash"/></svg>Clear data</button>
+      </div>
+      <div class="kpis">
+        <div class="kpi"><div class="ico i-b"><svg class="i"><use href="#i-timer"/></svg></div><div><b id="iUsage">—</b><span>total headset time</span></div></div>
+        <div class="kpi"><div class="ico i-g"><svg class="i"><use href="#i-users"/></svg></div><div><b id="iSessions">—</b><span>sessions</span></div></div>
+        <div class="kpi"><div class="ico i-a"><svg class="i"><use href="#i-play"/></svg></div><div><b id="iLaunches">—</b><span>content launches</span></div></div>
+        <div class="kpi"><div class="ico i-r"><svg class="i"><use href="#i-clock"/></svg></div><div><b id="iAvg">—</b><span>average session</span></div></div>
+      </div>
+      <div class="two">
+        <div class="card"><div class="hd"><h3>Daily usage</h3><span class="sp"></span><span class="muted">hours per day · last 14 days</span></div><div class="bd"><div class="spark" id="iSpark"></div></div></div>
+        <div class="card"><div class="hd"><h3>Top content</h3></div><div class="bd" id="iTop"></div></div>
+      </div>
+      <div class="two">
+        <div class="card"><div class="hd"><h3>Usage per headset</h3></div><div class="bd" id="iPer"></div></div>
+        <div class="card"><div class="hd"><h3>Recent events</h3><span class="sp"></span><input class="search" id="iFilter" placeholder="Filter…" /></div>
+          <div class="evwrap"><table><tbody id="iEvents"></tbody></table></div></div>
+      </div>
+    </section>
+
+    <!-- ===== SETTINGS ===== -->
+    <section class="page" id="page-settings">
+      <div class="sx">
+        <div class="sg"><h4>Live cast</h4><div class="sbox">
+          <div class="sr"><div><b>Stream quality</b><span class="d" id="sQualCap">—</span></div>
+            <div class="ctl"><div class="seg" id="sQual"><button data-v="2">Low</button><button data-v="4">Balanced</button><button data-v="8">High</button></div></div></div>
+          <div class="sr"><div><b>Eye view</b><span class="d">One eye fills each tile edge-to-edge, without distortion</span></div>
+            <div class="ctl"><div class="seg" id="sEye"><button data-v="left">Left</button><button data-v="right">Right</button><button data-v="both">Both</button></div>
+              <div class="mini"><canvas id="sPrev"></canvas><div class="ph" id="sPrevPh">Connect a headset to preview</div></div></div></div>
+          <div class="sr"><div><b>Fit</b><span class="d">Fill crops the overflow · Fit shows the whole eye with bars</span></div>
+            <div class="ctl"><div class="seg" id="sFit"><button data-v="fill">Fill</button><button data-v="fit">Fit</button></div></div></div>
+          <div class="sr"><div><b>Edge trim</b><span class="d">Hide the black lens border around the eye</span></div>
+            <div class="ctl"><input type="range" id="sTrim" min="0" max="30" value="12"><b id="sTrimV">12%</b></div></div>
+        </div></div>
+
+        <div class="sg"><h4>Recordings &amp; screenshots</h4><div class="sbox">
+          <div class="sr"><div><b>Save to</b><span class="d" id="sDir">—</span></div><button class="lnk" id="sDirChange">Change</button></div>
+        </div></div>
+
+        <div class="sg"><h4>Connection</h4><div class="sbox">
+          <div class="sr"><div><b>ADB</b><span class="d" id="sAdb">—</span></div><button class="lnk" id="sAdbChange">Change</button></div>
+          <div class="sr"><div><b>Reconnect Wi-Fi headsets on startup</b><span class="d">Re-attaches headsets you used before</span></div><button class="sw" id="sReconnect" aria-label="Reconnect Wi-Fi headsets on startup"></button></div>
+          <div class="sr"><div><b>Updates</b><span class="d" id="sVersion">—</span></div><button class="lnk" id="sUpdate">Check for updates</button></div>
+        </div></div>
+
+        <details class="sg adv"><summary>Advanced</summary><div class="sbox">
+          <div class="sr"><div><b>Custom bitrate</b><span class="d">Mbps per headset · overrides Stream quality</span></div><input class="in" id="sBitrate" type="number" min="1" max="20" step="0.5" /></div>
+          <div class="sr"><div><b>Capture size</b><span class="d">e.g. 1024x576 · blank = automatic</span></div><input class="in" id="sSize" placeholder="Auto" /></div>
+          <div class="sr"><div><b>Tilt correction</b><span class="d">Degrees · blank = automatic (Quest 3: 21°)</span></div><input class="in" id="sTilt" placeholder="Auto" /></div>
+          <div class="sr"><div><b>scrcpy path</b><span class="d">Optional external mirror</span></div><input class="in" id="sScrcpy" placeholder="Not set" /></div>
+        </div></details>
+
+        <details class="sg adv"><summary>Headset setup guide</summary><div class="guide">
+          <div class="gd"><img src="assets/devices/quest-3.png" alt="" /><div><b>Meta Quest 2 / 3 / 3S / Pro</b>Enable Developer Mode in the Meta Horizon app, then accept “Allow USB debugging” inside the headset.</div></div>
+          <div class="gd"><img src="assets/devices/pico-4-ultra.png" alt="" /><div><b>Pico 4 / 4 Ultra</b>Settings → About → tap Software Version 8×, then Developer → USB debugging.</div></div>
+          <div class="gd"><img src="assets/devices/vive-focus-vision.png" alt="" /><div><b>HTC Vive Focus</b>Tap Build Version 7× and enable USB debugging.</div></div>
+          <div class="gd"><img src="assets/devices/samsung-galaxy-xr.png" alt="" /><div><b>Wireless mode</b>Connect over USB once, then use Wi-Fi mode in the headset's Control panel and unplug the cable.</div></div>
+        </div></details>
+
+        <div class="sfoot" id="sFoot">Tobiya Hub</div>
+      </div>
+    </section>
+  </div>
+</div>
+
+<!-- floating bar for selected headsets -->
+<div class="selbar" id="selbar">
+  <b id="selN">0 selected</b>
+  <button class="btn s ghost" id="sbHome"><svg class="i"><use href="#i-home"/></svg>Home</button>
+  <button class="btn s ghost" id="sbWake"><svg class="i"><use href="#i-sun"/></svg>Wake</button>
+  <button class="btn s ghost" id="sbSleep"><svg class="i"><use href="#i-moon"/></svg>Sleep</button>
+  <button class="btn s ghost" id="sbVol" data-vol><svg class="i"><use href="#i-volume"/></svg>Volume</button>
+  <button class="btn s ghost" id="sbLaunch"><svg class="i"><use href="#i-rocket"/></svg>Launch</button>
+  <button class="btn s ghost" id="sbLive"><svg class="i i-rec"><use href="#i-dot"/></svg>Live cast</button>
+  <span class="dv"></span>
+  <button class="btn s ghost warn" id="sbReboot"><svg class="i"><use href="#i-refresh"/></svg>Reboot</button>
+  <button class="btn s ghost warn" id="sbPower"><svg class="i"><use href="#i-power"/></svg>Power off</button>
+  <button class="btn s d" id="sbDelete"><svg class="i"><use href="#i-trash"/></svg>Delete</button>
+  <span class="dv"></span>
+  <button class="btn s" id="sbClear" title="Clear selection"><svg class="i"><use href="#i-x"/></svg></button>
+</div>
+
+<!-- confirm dialog (delete / reboot / power off / clear data) -->
+<div class="mask" id="confirmMask"><div class="modal sm">
+  <div class="mbd cellrow"><div class="delico" id="cfIco"><svg class="i"><use href="#i-trash"/></svg></div><div><h3 id="cfTitle">Are you sure?</h3><p class="muted" id="cfText"></p></div></div>
+  <div class="dlist listbox" id="cfList"></div>
+  <div class="mft"><button class="btn" id="cfCancel">Cancel</button><button class="btn dd" id="cfOk">Confirm</button></div>
+</div></div>
+
+<!-- add headset -->
+<div class="mask" id="addMask"><div class="modal sm">
+  <div class="mhd"><span class="lico"><svg class="i"><use href="#i-plus"/></svg></span><div class="tx"><h3>Add a headset</h3><span class="muted">USB or Wi-Fi</span></div><button class="btn s" id="addClose"><svg class="i"><use href="#i-x"/></svg></button></div>
+  <div class="mbd">
+    <p class="muted"><b>USB:</b> plug the headset in with developer mode on and accept “Allow USB debugging” inside it — it appears automatically.</p>
+    <p class="muted"><b>Wi-Fi:</b> enter the headset's IP address (it must already have wireless ADB enabled).</p>
+    <input class="in keyin" id="addIp" placeholder="192.168.1.20" />
+    <div class="mstatus" id="addStatus"></div>
+  </div>
+  <div class="mft"><button class="btn" id="addCancel">Cancel</button><button class="btn p" id="addGo"><svg class="i"><use href="#i-link"/></svg>Connect</button></div>
+</div></div>
+
+<!-- per-headset control -->
+<div class="mask" id="ctlMask"><div class="modal">
+  <div class="mhd"><img id="ctlImg" alt="" /><div class="tx"><h3 id="ctlName">Headset</h3><span class="muted" id="ctlMeta"></span></div><button class="btn s" id="ctlClose"><svg class="i"><use href="#i-x"/></svg></button></div>
+  <div class="mcols">
+    <div>
+      <div class="mprev"><img id="ctlHero" alt="" /><button class="btn s lc" id="ctlLive"><span class="pulse red"></span>Watch in Live cast <svg class="i"><use href="#i-external"/></svg></button></div>
+      <div class="cellrow ctlrow">
+        <button class="btn s" id="ctlHome"><svg class="i"><use href="#i-home"/></svg>Home</button>
+        <button class="btn s" id="ctlWake"><svg class="i"><use href="#i-sun"/></svg>Wake</button>
+        <button class="btn s" id="ctlSleep"><svg class="i"><use href="#i-moon"/></svg>Sleep</button>
+        <span class="sp"></span>
+        <button class="btn s" id="ctlScrcpy" title="Open an external scrcpy mirror"><svg class="i"><use href="#i-copy"/></svg>scrcpy</button>
+      </div>
+      <div class="slider"><label><svg class="i"><use href="#i-volume"/></svg>Volume</label><input type="range" id="ctlVol" min="0" max="100" value="70" /><span id="ctlVolV">70%</span></div>
+      <div class="slider"><label><svg class="i"><use href="#i-sun"/></svg>Brightness</label><input type="range" id="ctlBri" min="5" max="100" value="80" /><span id="ctlBriV">80%</span></div>
+    </div>
+    <div>
+      <div class="lblx">LAUNCH ON THIS HEADSET</div>
+      <input class="search wide-in" id="ctlSearch" placeholder="Search apps &amp; videos…" />
+      <div class="dlist listbox" id="ctlList"><div class="loading">loading…</div></div>
+      <div class="grid2">
+        <button class="btn s c" id="ctlApk"><svg class="i"><use href="#i-package"/></svg>Install APK</button>
+        <button class="btn s c" id="ctlWifi"><svg class="i"><use href="#i-wifi"/></svg>Wi-Fi mode</button>
+        <button class="btn s c" id="ctlStopApps"><svg class="i"><use href="#i-stop"/></svg>Stop apps</button>
+        <button class="btn s c" id="ctlPause"><svg class="i"><use href="#i-playpause"/></svg>Pause / resume</button>
+        <button class="btn s d c" id="ctlReboot"><svg class="i"><use href="#i-refresh"/></svg>Reboot</button>
+        <button class="btn s d c" id="ctlPower"><svg class="i"><use href="#i-power"/></svg>Power off</button>
+      </div>
+    </div>
+  </div>
+</div></div>
+
+<!-- license code (re-activate / renew) -->
+<div class="mask" id="licMask"><div class="modal sm">
+  <div class="mbd">
+    <h3>Activate license code</h3>
+    <p class="muted">Enter a new or renewed code from your admin. It replaces the current one.</p>
+    <input class="keyin" id="licIn" maxlength="40" placeholder="XXXX-XXXX-XXXX-XXXX" spellcheck="false" autocomplete="off" />
+    <div class="keyerr" id="licErr"></div>
+  </div>
+  <div class="mft"><button class="btn" id="licCancel">Cancel</button><button class="btn p" id="licGo"><svg class="i"><use href="#i-key"/></svg>Activate</button></div>
+</div></div>
+
+<!-- file viewer -->
+<div class="mask" id="fvMask"><div class="modal viewer">
+  <div class="mhd"><img id="fvDev" alt="" /><div class="tx"><h3 id="fvName"></h3><span class="muted" id="fvMeta"></span></div>
+    <button class="btn s" id="fvShow"><svg class="i"><use href="#i-folder"/></svg>Show in folder</button>
+    <button class="btn s" id="fvOpen"><svg class="i"><use href="#i-external"/></svg>Open</button>
+    <button class="btn s d" id="fvDel"><svg class="i"><use href="#i-trash"/></svg></button>
+    <button class="btn s" id="fvClose"><svg class="i"><use href="#i-x"/></svg></button></div>
+  <div class="vimg" id="fvBox"><span class="nav2 l" id="fvPrev"><svg class="i"><use href="#i-chevronLeft"/></svg></span><span class="nav2 r" id="fvNext"><svg class="i"><use href="#i-chevronRight"/></svg></span></div>
+</div></div>
+
+<!-- first run: activation required -->
+<div class="act-screen" id="actScr"><div class="actbox">
+  <div class="brand"><img src="assets/logo.png" alt="Tobiya Studio" /></div>
+  <div id="actForm">
+    <h2 id="actTitle">Activate Tobiya Hub</h2>
+    <p id="actText">Enter the license code from your order to start the app.</p>
+    <input class="keyin" id="actIn" maxlength="40" placeholder="XXXX-XXXX-XXXX-XXXX" spellcheck="false" autocomplete="off" />
+    <div class="keyerr" id="actErr"></div>
+    <button class="btn p actbtn" id="actGo"><svg class="i"><use href="#i-key"/></svg>Activate license</button>
+  </div>
+  <div id="actOk" hidden>
+    <div class="okic"><svg class="i"><use href="#i-check"/></svg></div>
+    <h2>License activated</h2>
+    <div class="oksum"><div><small>Capacity</small><b id="okCap">—</b></div><div><small>Valid until</small><b id="okExp">—</b></div><div><small>Time left</small><b id="okLeft">—</b></div></div>
+    <button class="btn p actbtn" id="actStart">Start Tobiya Hub <svg class="i"><use href="#i-chevronRight"/></svg></button>
+  </div>
+</div></div>
+
+<div class="update-toast" id="updateToast" hidden></div>
+
+<script src="icons.js"></script>
+<script src="common.js"></script>
+<script src="cast-player.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data:; style-src 'self'" />
+  <title>Tobiya Hub — Live Cast</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+<div class="lw">
+  <div class="lhead">
+    <div class="ttl"><span class="pulse red"></span>Live cast</div>
+    <span class="pill" id="lwInfo">—</span>
+    <span class="sp"></span>
+    <span class="ctl">Eye <span class="seg" id="lEye"><button data-v="left">Left</button><button data-v="right">Right</button><button data-v="both">Both</button></span></span>
+    <span class="ctl">Fit <span class="seg" id="lFit"><button data-v="fill">Fill</button><button data-v="fit">Fit</button></span></span>
+    <span class="ctl">Edge trim <input type="range" id="lTrim" min="0" max="30" value="12" /><span class="val" id="lTrimV">12%</span></span>
+    <span class="ctl">Layout <span class="seg" id="lLay"><button data-v="auto">Auto</button><button data-v="2">2×</button><button data-v="3">3×</button><button data-v="4">4×</button></span></span>
+    <span class="ctl">Quality <span class="seg" id="lQual"><button data-v="2">Low</button><button data-v="4">Balanced</button><button data-v="8">High</button></span></span>
+  </div>
+
+  <div class="lgrid" id="lgrid"></div>
+  <div class="lfocus" id="lfocus"></div>
+  <div class="lwempty" id="lwEmpty" hidden><div><div class="empty"><div class="big"><svg class="i"><use href="#i-headset"/></svg></div><b>No headsets online</b>Connect headsets in the main window — they appear here automatically.</div></div></div>
+
+  <!-- dock for all headsets -->
+  <div class="dock" id="dockAll">
+    <span class="muted" id="lTgt">—</span>
+    <span class="sp"></span>
+    <button class="btn s" id="dHome"><svg class="i"><use href="#i-home"/></svg>Home</button>
+    <button class="btn s" id="dWake"><svg class="i"><use href="#i-sun"/></svg>Wake</button>
+    <button class="btn s" id="dVol" data-vol><svg class="i"><use href="#i-volume"/></svg><span class="volv">Volume</span></button>
+    <button class="btn s g" id="dApps"><svg class="i"><use href="#i-rocket"/></svg>Launch app</button>
+    <button class="btn s p" id="dVids"><svg class="i"><use href="#i-play"/></svg>Play 360° video</button>
+    <span class="vdiv"></span>
+    <button class="btn s" id="dShotAll"><svg class="i"><use href="#i-camera"/></svg>Screenshot all</button>
+    <button class="btn s rec" id="dRecAll"><svg class="i i-rec"><use href="#i-rec"/></svg><span>Record all</span></button>
+    <span class="vdiv"></span>
+    <button class="btn s d" id="dEnd"><svg class="i"><use href="#i-stop"/></svg>End live cast</button>
+  </div>
+
+  <!-- dock for one enlarged headset -->
+  <div class="dock one" id="dockOne" hidden>
+    <button class="btn s" id="oBack"><svg class="i"><use href="#i-arrowLeft"/></svg>Back to all</button>
+    <img class="fimg" id="oImg" alt="" />
+    <div class="fname"><b id="oName">—</b><span id="oMeta">—</span></div>
+    <span class="sp"></span>
+    <button class="btn s" id="oHome"><svg class="i"><use href="#i-home"/></svg>Home</button>
+    <button class="btn s" id="oWake"><svg class="i"><use href="#i-sun"/></svg>Wake</button>
+    <button class="btn s" id="oVol" data-vol><svg class="i"><use href="#i-volume"/></svg>Volume</button>
+    <button class="btn s g" id="oApps"><svg class="i"><use href="#i-rocket"/></svg>Launch app</button>
+    <button class="btn s p" id="oVids"><svg class="i"><use href="#i-play"/></svg>360° video</button>
+    <span class="vdiv"></span>
+    <button class="btn s" id="oShot"><svg class="i"><use href="#i-camera"/></svg>Screenshot</button>
+    <button class="btn s rec" id="oRec"><svg class="i i-rec"><use href="#i-rec"/></svg><span>Record</span></button>
+    <span class="vdiv"></span>
+    <button class="btn s" id="oFull"><svg class="i"><use href="#i-expand"/></svg>Fullscreen</button>
+    <button class="btn s d" id="oStop"><svg class="i"><use href="#i-stop"/></svg><span>Stop stream</span></button>
+  </div>
+</div>
+
+<!-- in-window panel: launch app / play 360° video -->
+<div class="lpmask" id="lp"><div class="lpanel">
+  <div class="lph"><span class="lpico" id="lpIco"></span><div class="tx"><h3 id="lpTitle">Launch app</h3><span class="lptgt" id="lpTgt"></span></div><button class="btn s" id="lpClose"><svg class="i"><use href="#i-x"/></svg></button></div>
+  <div class="lptools"><input class="search" id="lpSearch" placeholder="Search…" /><button class="btn s" id="lpRefresh"><svg class="i"><use href="#i-refresh"/></svg>Refresh</button></div>
+  <div class="lpbody" id="lpBody"></div>
+  <div class="lpf" id="lpFoot"></div>
+</div></div>
+
+<script src="icons.js"></script>
+<script src="common.js"></script>
+<script src="cast-player.js"></script>
+<script src="stream.js"></script>
+</body>
+</html>
